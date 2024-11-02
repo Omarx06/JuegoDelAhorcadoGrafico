@@ -4,7 +4,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 
-
 public class Ahorcado extends JFrame {
     private List<Jugador> jugadores = new ArrayList<>();
     private HashSet<Character> letrasUsadas = new HashSet<>();
@@ -80,8 +79,8 @@ public class Ahorcado extends JFrame {
         fraseOculta = ocultarFrase(fraseActual);  // Convertir la frase en guiones bajos
         labelFraseOculta.setText(new String(fraseOculta));  // Mostrar la frase oculta
 
-        // Mostrar mensaje para el turno del jugador actual
-        labelInfo.setText("Turno de " + jugadores.get(jugadorIndex).getNombre() + ": Adivina una letra");
+        // Mostrar mensaje para el turno del jugador actual con sus puntos
+        actualizarInfoJugador();
     }
 
     private char[] ocultarFrase(String frase) {
@@ -115,6 +114,9 @@ public class Ahorcado extends JFrame {
                     } else {
                         iniciarRonda();  // Iniciar una nueva ronda si no hay ganador
                     }
+                } else {
+                    // Actualizar información del jugador después de un intento exitoso
+                    actualizarInfoJugador();
                 }
             } else {
                 labelInfo.setText("Letra incorrecta.");
@@ -127,7 +129,7 @@ public class Ahorcado extends JFrame {
     private void pasarTurno() {
         // Cambiar al siguiente jugador
         jugadorIndex = (jugadorIndex + 1) % jugadores.size();  // Cambiar al siguiente jugador
-        labelInfo.setText("Turno de " + jugadores.get(jugadorIndex).getNombre() + ": Adivina una letra");
+        actualizarInfoJugador();
     }
 
     private int contarApariciones(String frase, char letra) {
@@ -161,6 +163,19 @@ public class Ahorcado extends JFrame {
         for (JButton boton : botonesLetras) {
             boton.setEnabled(false);
         }
+    }
+
+    private String obtenerPuntajesJugadores() {
+        StringBuilder puntajes = new StringBuilder("Puntajes: ");
+        for (Jugador jugador : jugadores) {
+            puntajes.append(jugador.getNombre()).append(" (").append(jugador.getPuntos()).append("), ");
+        }
+        return puntajes.toString().replaceAll(", $", "");  // Eliminar la última coma
+    }
+
+    private void actualizarInfoJugador() {
+        labelInfo.setText(obtenerPuntajesJugadores() + "\nTurno de " + jugadores.get(jugadorIndex).getNombre() +
+                " (Puntos: " + jugadores.get(jugadorIndex).getPuntos() + "): Adivina una letra");
     }
 
     public static void main(String[] args) {
